@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD Rakib Golder - AI Engineer & Full Stack Developer</title>
+    <meta name="description" content="Award-winning software engineer specializing in AI, machine learning, and full-stack development.">
+    <meta name="keywords" content="AI Engineer, Machine Learning, Full Stack Developer, Python, React, Data Science, Web Development">
+    <meta name="author" content="MD Rakib Golder">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta property="og:title" content="MD Rakib Golder - AI Engineer & Full Stack Developer">
+    <meta property="og:description" content="Award-winning software engineer specializing in AI, machine learning, and full-stack development.">
+    <meta property="og:image" content="https://yourwebsite.com/static/images/rakib.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourwebsite.com/">
+    <meta property="twitter:title" content="MD Rakib Golder - AI Engineer & Full Stack Developer">
+    <meta property="twitter:description" content="Award-winning software engineer specializing in AI, machine learning, and full-stack development.">
+    <meta property="twitter:image" content="https://yourwebsite.com/static/images/rakib.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="static/css/style.css">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video class="bg-video active" autoplay muted loop playsinline>
+            <source src="static/videos/1085656-uhd_3840_2160_25fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/1722882-uhd_3840_2160_25fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/1851190-uhd_3840_2160_25fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/3129671-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/3129977-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/3130284-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/3163534-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        </video>
+        <video class="bg-video" muted loop playsinline>
+            <source src="static/videos/mixkit-slowly-approaching-a-clock-on-a-black-background-28897-hd-ready.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Animated Particles -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-outline"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">RG</span>
+                <span class="logo-text">Rakib Golder</span>
+            </a>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#portfolio" class="nav-link">Project</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        <i class="fas fa-star"></i>
+                        <span>Available for Freelance</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Hi, I'm <span class="gradient-text">Rakib Golder</span>
+                    </h1>
+                    <h2 class="hero-subtitle">AI Engineer & Developer</h2>
+                    <p class="hero-description">
+                        I create intelligent, scalable applications that solve real-world problems. 
+                        Specializing in AI/ML, data analytics, full-stack development, and crafting exceptional digital experiences.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#portfolio" class="btn btn-primary">
+                            <span>View My Work</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary">
+                            <span>Let's Talk</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            <h3>5+</h3>
+                            <p>Years Experience</p>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-icon"><i class="fas fa-rocket"></i></div>
+                            <h3>50+</h3>
+                            <p>Projects Completed</p>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                            <h3>100%</h3>
+                            <p>Client Satisfaction</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-wrapper">
+                        <div class="hero-bg-decoration">
+                            <img src="static/images/hero.jpg" alt="Background" class="hero-decoration-img" loading="eager">
+                        </div>
+                        <img src="static/images/rakib.jpg" alt="MD Rakib Golder" class="main-profile" loading="eager">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Specialist</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-code"></i>
+                            <span>Full Stack</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Mobile Dev</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll Down</span>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">About Me</span>
+                <h2 class="section-title">Turning Ideas Into <span class="gradient-text">Reality</span></h2>
+            </div>
+            <div class="about-content">
+                <div class="about-image-section">
+                    <div class="about-profile-wrapper">
+                        <img src="static/images/profile.jpg" alt="Professional Profile" class="about-profile-img" loading="lazy">
+                        <div class="about-badge-overlay">
+                            <span class="about-badge"><i class="fas fa-award"></i> Award Winner</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <p class="lead">I'm a passionate software engineer with expertise in artificial intelligence, machine learning, data analytics, and full-stack development.</p>
+                    <p>With over 5 years of experience, I've worked on diverse projects ranging from AI-powered mobile applications to enterprise-level web platforms with real-time analytics. My approach combines technical excellence with creative problem-solving to deliver solutions that make a real impact.</p>
+                </div>
+            </div>
+            <div class="skills-grid">
+                        <div class="skill-item">
+                            <i class="fas fa-brain"></i>
+                            <div>
+                                <h4>AI & Machine Learning</h4>
+                                <p>TensorFlow, PyTorch, OpenAI</p>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fas fa-laptop-code"></i>
+                            <div>
+                                <h4>Full Stack Development</h4>
+                                <p>React, Node.js, Python, .NET</p>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fas fa-database"></i>
+                            <div>
+                                <h4>Database & Cloud</h4>
+                                <p>MongoDB, PostgreSQL, AWS</p>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div>
+                                <h4>Mobile Development</h4>
+                                <p>React Native, Flutter, MAUI</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">What I Do</span>
+                <h2 class="section-title">Services I <span class="gradient-text">Offer</span></h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card with-preview">
+                    <div class="service-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI & Machine Learning</h3>
+                    <div class="service-preview-img">
+                        <img src="static/images/artificial.jpg" alt="Analytics Dashboard" loading="lazy">
+                        <div class="preview-overlay">
+                            <span><i class="fas fa-chart-line"></i> Data Analytics</span>
+                        </div>
+                    </div>
+                    <p>Custom AI solutions, predictive models, natural language processing, and advanced data analytics with real-time dashboards.</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Machine Learning Models</li>
+                        <li><i class="fas fa-check"></i> Predictive Analytics & BI</li>
+                        <li><i class="fas fa-check"></i> NLP & Computer Vision</li>
+                    </ul>
+                </div>
+                <div class="service-card featured">
+                    <div class="featured-badge"><i class="fas fa-crown"></i> Most Popular</div>
+                    <div class="service-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Full Stack Development</h3>
+                    <p>End-to-end web applications with modern frameworks, scalable architecture, responsive design, and seamless user experiences.</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> React & Next.js</li>
+                        <li><i class="fas fa-check"></i> Node.js & Python</li>
+                        <li><i class="fas fa-check"></i> Cloud Deployment & DevOps</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile App Development</h3>
+                    <p>Native and cross-platform mobile applications with stunning UI and seamless performance.</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> iOS & Android</li>
+                        <li><i class="fas fa-check"></i> React Native</li>
+                        <li><i class="fas fa-check"></i> Flutter & MAUI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">My Work</span>
+                <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
+            </div>
+            <div class="portfolio-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="static/images/project1.jpg" alt="Enterprise Web Platform" loading="lazy">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span>React</span>
+                            <span>TypeScript</span>
+                            <span>AWS</span>
+                        </div>
+                        <h3>Enterprise Web Platform</h3>
+                        <p>Scalable web application with advanced analytics, real-time collaboration, and cloud integration.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="static/images/analytics.jpg" alt="AI-Powered Analytics" loading="lazy">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                            <span>Data Science</span>
+                        </div>
+                        <h3>AI-Powered Analytics Dashboard</h3>
+                        <p>Machine learning platform with predictive analytics, data visualization, and automated insights.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="static/images/lantern.jpg" alt="AI Islamic Companion" loading="lazy">
+                        <div class="project-overlay">
+                            <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-tags">
+                            <span>AI/ML</span>
+                            <span>.NET MAUI</span>
+                            <span>Mobile</span>
+                        </div>
+                        <h3>AI Islamic Companion</h3>
+                        <p>Intelligent mobile app with AI-powered spiritual guidance, prayer reminders, and Quranic insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Get In Touch</span>
+                <h2 class="section-title">Let's Work <span class="gradient-text">Together</span></h2>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Let's talk about your project</h3>
+                    <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Whether it's AI/ML, data analytics, or full-stack development, let's create something amazing together.</p>
+                    <div class="contact-items">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <a href="mailto:marakibgolder@gmail.com">marakibgolder@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone</h4>
+                                <a href="tel:+1234567890">+1 (234) 567-890</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Location</h4>
+                                <p>Available Worldwide</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="subject" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span>Send Message</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                    <div class="form-status" id="formStatus"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Testimonials</span>
+                <h2 class="section-title">What <span class="gradient-text">Clients Say</span></h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Rakib's AI solution transformed our business operations. The machine learning model he developed increased our efficiency by 40%. Exceptional work and professionalism!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>CEO, TechCorp Inc.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card featured-testimonial">
+                    <div class="featured-badge"><i class="fas fa-crown"></i> Top Rated</div>
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Outstanding full-stack developer! Rakib built our entire platform from scratch with cutting-edge technology. His attention to detail and problem-solving skills are unmatched."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Michael Chen</h4>
+                            <p>CTO, DataFlow Systems</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Working with Rakib was a game-changer. His expertise in mobile development and UI/UX design helped us launch our app successfully. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Emily Rodriguez</h4>
+                            <p>Founder, AppVenture</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2025 MD Rakib Golder. All rights reserved.</p>
+                <p>Crafted with <i class="fas fa-heart"></i> and creativity</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AI Chat Assistant -->
+    <div class="ai-chat-widget" id="aiChatWidget">
+        <button class="chat-toggle-btn" id="chatToggleBtn" aria-label="Open AI Assistant">
+            <i class="fas fa-robot"></i>
+            <span class="chat-badge">AI</span>
+            <span class="pulse-ring"></span>
+        </button>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <div class="chat-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4>AI Assistant</h4>
+                        <p class="chat-status"><span class="status-dot"></span> Online</p>
+                    </div>
+                </div>
+                <button class="chat-close-btn" id="chatCloseBtn" aria-label="Close chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>👋 Hi! I'm Rakib's AI Assistant. I can help you with:</p>
+                        <ul>
+                            <li>🎯 Project inquiries</li>
+                            <li>💼 Services information</li>
+                            <li>📧 Contact details</li>
+                            <li>💡 General questions</li>
+                        </ul>
+                        <p>How can I assist you today?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-quick-replies" id="chatQuickReplies">
+                <button class="quick-reply-btn" data-message="Tell me about AI services">
+                    <i class="fas fa-brain"></i> AI Services
+                </button>
+                <button class="quick-reply-btn" data-message="Show me portfolio projects">
+                    <i class="fas fa-folder-open"></i> Portfolio
+                </button>
+                <button class="quick-reply-btn" data-message="How can I hire you?">
+                    <i class="fas fa-handshake"></i> Hire Me
+                </button>
+            </div>
+            
+            <form class="chat-input-form" id="chatInputForm">
+                <button type="button" class="voice-btn" id="voiceBtn" aria-label="Voice input" title="Click to speak">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Type or speak your message..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="chat-send-btn" aria-label="Send message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Controls -->
+    <div class="video-controls">
+        <button class="video-btn" id="prevVideo"><i class="fas fa-chevron-left"></i></button>
+        <div class="video-dots">
+            <span class="dot active" data-index="0"></span>
+            <span class="dot" data-index="1"></span>
+            <span class="dot" data-index="2"></span>
+            <span class="dot" data-index="3"></span>
+            <span class="dot" data-index="4"></span>
+            <span class="dot" data-index="5"></span>
+            <span class="dot" data-index="6"></span>
+            <span class="dot" data-index="7"></span>
+        </div>
+        <button class="video-btn" id="nextVideo"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Success Notification Toast -->
+    <div class="toast-notification" id="toastNotification">
+        <i class="fas fa-check-circle"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="static/js/script.js"></script>
+</body>
+</html>

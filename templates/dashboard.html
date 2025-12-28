@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar-brand i {
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .navbar h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .time-display {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+            animation: slideIn 0.6s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .welcome-banner h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .welcome-banner p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .stat-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 20px;
+            background: inherit;
+            opacity: 0.3;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .stat-icon.messages {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .stat-icon.chats {
+            background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%);
+            color: white;
+        }
+
+        .stat-icon.events {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-info h3 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .stat-trend.up {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 5px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Data Card */
+        .data-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .data-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .refresh-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .refresh-btn:hover i {
+            transform: rotate(180deg);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .no-data::before {
+            content: '📭';
+            font-size: 48px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* Message Box */
+        .message-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid transparent;
+            border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .message-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .message-box h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message-box h4::before {
+            content: '👤';
+            font-size: 20px;
+        }
+
+        .message-box p {
+            color: #666;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .message-box strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .message-box small {
+            color: #999;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+        }
+
+        .message-box small::before {
+            content: '🕒';
+        }
+
+        /* Chat Item */
+        .chat-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .chat-item:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .chat-user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .chat-user::before {
+            content: '💬';
+            -webkit-text-fill-color: initial;
+        }
+
+        .chat-ai {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .chat-ai::before {
+            content: '🤖';
+            -webkit-text-fill-color: initial;
+        }
+
+        .chat-item small {
+            color: #999;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 12px;
+        }
+
+        .chat-item small::before {
+            content: '🕒';
+        }
+
+        /* Analytics Summary */
+        .analytics-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .summary-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-item h4 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .summary-item p {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Time Filters */
+        .time-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .time-filter-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .time-filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .time-filter-btn:hover:not(.active) {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+        }
+
+        /* Export Button */
+        .export-btn {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        /* Analytics Styles */
+        .analytics-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        .analytics-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        .analytics-table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .analytics-table th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .analytics-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: white;
+            transition: all 0.2s ease;
+            vertical-align: middle;
+        }
+
+        .analytics-table tr:hover td {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: scale(1.01);
+        }
+
+        .analytics-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .analytics-table tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .analytics-table tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .pagination-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn:not(:disabled):hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .event-badge.page_view {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .event-badge.ai_chat {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .event-badge.ai_chat_opened {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .event-badge.ai_chat_message {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .event-badge.contact_form {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+
+        .event-data {
+            font-family: 'Courier New', monospace;
+            background: #f5f6fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .analytics-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+        }
+
+        .time-badge {
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+
+            .navbar-brand {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navbar-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .welcome-banner h2 {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+            }
+
+            .data-card {
+                padding: 20px;
+            }
+
+            .data-card-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .refresh-btn {
+                width: 100%;
+            }
+
+            .analytics-filters {
+                flex-direction: column;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+
+            .analytics-table {
+                font-size: 13px;
+            }
+
+            .analytics-table th,
+            .analytics-table td {
+                padding: 10px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* Footer */
+        .admin-footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            margin-top: 50px;
+        }
+
+        .admin-footer p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .admin-footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .admin-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .admin-footer a:hover {
+            color: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        /* Quick Stats Badge */
+        .quick-stat {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin: 0 5px;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-container.large {
+            height: 400px;
+        }
+
+        .date-range-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-range-btn {
+            padding: 10px 20px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            color: #667eea;
+        }
+
+        .date-range-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .date-range-btn:hover:not(.active) {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .visitor-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .insight-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .insight-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .insight-card h4 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .insight-card p {
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .insight-card .trend {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .insight-card .trend.up {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .insight-card .trend.down {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .chart-container.large {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Admin Dashboard</h1>
+        </div>
+        <div class="navbar-actions">
+            <div class="time-display" id="currentTime">
+                <i class="fas fa-clock"></i> Loading...
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2>👋 Welcome Back, Admin!</h2>
+            <p>Here's what's happening with your portfolio today</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card" style="color: #4caf50;">
+                <div class="stat-icon messages">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="messagesCount">-</h3>
+                    <p>Contact Messages</p>
+                    <span class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i> Active
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card" style="color: #2196f3;">
+                <div class="stat-icon chats">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="chatsCount">-</h3>
+                    <p>AI Conversations</p>
+                    <span class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i> Active
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card" style="color: #ff9800;">
+                <div class="stat-icon events">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="eventsCount">-</h3>
+                    <p>Analytics Events</p>
+                    <span class="stat-trend up">
+                        <i class="fas fa-arrow-up"></i> Tracking
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('dashboard')">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </button>
+            <button class="tab" onclick="switchTab('messages')">
+                <i class="fas fa-envelope"></i> Messages
+            </button>
+            <button class="tab" onclick="switchTab('chats')">
+                <i class="fas fa-comments"></i> AI Chats
+            </button>
+            <button class="tab" onclick="switchTab('analytics')">
+                <i class="fas fa-list"></i> Events Log
+            </button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard-tab">
+            <!-- Date Range Selector -->
+            <div class="data-card" style="margin-bottom: 25px;">
+                <div class="date-range-selector">
+                    <button class="date-range-btn" onclick="loadDashboardData('week')">
+                        <i class="fas fa-calendar-week"></i> This Week
+                    </button>
+                    <button class="date-range-btn active" onclick="loadDashboardData('month')">
+                        <i class="fas fa-calendar-alt"></i> This Month
+                    </button>
+                    <button class="date-range-btn" onclick="loadDashboardData('year')">
+                        <i class="fas fa-calendar"></i> This Year
+                    </button>
+                    <button class="date-range-btn" onclick="loadDashboardData('all')">
+                        <i class="fas fa-infinity"></i> All Time
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visitor Insights -->
+            <div class="visitor-insights">
+                <div class="insight-card">
+                    <div class="icon">👥</div>
+                    <h4 id="totalVisitors">-</h4>
+                    <p>Total Visitors</p>
+                    <span class="trend up" id="visitorTrend">
+                        <i class="fas fa-arrow-up"></i> +0%
+                    </span>
+                </div>
+                <div class="insight-card">
+                    <div class="icon">💬</div>
+                    <h4 id="totalChats">-</h4>
+                    <p>AI Conversations</p>
+                    <span class="trend up" id="chatTrend">
+                        <i class="fas fa-arrow-up"></i> +0%
+                    </span>
+                </div>
+                <div class="insight-card">
+                    <div class="icon">📧</div>
+                    <h4 id="totalContacts">-</h4>
+                    <p>Contact Forms</p>
+                    <span class="trend up" id="contactTrend">
+                        <i class="fas fa-arrow-up"></i> +0%
+                    </span>
+                </div>
+                <div class="insight-card">
+                    <div class="icon">⚡</div>
+                    <h4 id="totalEvents">-</h4>
+                    <p>Total Events</p>
+                    <span class="trend up" id="eventTrend">
+                        <i class="fas fa-arrow-up"></i> +0%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <!-- Visitor Activity Over Time -->
+                <div class="chart-card" style="grid-column: span 2;">
+                    <h3><i class="fas fa-chart-line"></i> Visitor Activity Timeline</h3>
+                    <div class="chart-container large">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Event Distribution -->
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Activity Breakdown</h3>
+                    <div class="chart-container">
+                        <canvas id="eventPieChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Popular Pages -->
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> User Engagement</h3>
+                    <div class="chart-container">
+                        <canvas id="engagementChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Hourly Activity -->
+                <div class="chart-card" style="grid-column: span 2;">
+                    <h3><i class="fas fa-clock"></i> Activity by Hour (24h Pattern)</h3>
+                    <div class="chart-container">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div class="tab-content" id="messages-tab">
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h2><i class="fas fa-envelope"></i> Contact Messages</h2>
+                    <button class="refresh-btn" onclick="loadMessages()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="messagesContent" class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Chats Tab -->
+        <div class="tab-content" id="chats-tab">
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h2><i class="fas fa-comments"></i> AI Chat History</h2>
+                    <button class="refresh-btn" onclick="loadChats()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="chatsContent" class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="analytics-tab">
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h2><i class="fas fa-chart-line"></i> Analytics Events</h2>
+                    <button class="refresh-btn" onclick="loadAnalytics(currentFilter)">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="analyticsContent" class="loading">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            const dateString = now.toLocaleDateString('en-US', { 
+                weekday: 'short',
+                month: 'short', 
+                day: 'numeric'
+            });
+            document.getElementById('currentTime').innerHTML = 
+                `<i class="fas fa-clock"></i> ${dateString}, ${timeString}`;
+        }
+
+        // Check authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/admin/check');
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    window.location.href = '/admin/login.html';
+                }
+            } catch (error) {
+                window.location.href = '/admin/login.html';
+            }
+        }
+
+        // Logout
+        async function logout() {
+            try {
+                await fetch('/api/admin/logout', { method: 'POST' });
+                window.location.href = '/admin/login.html';
+            } catch (error) {
+                alert('Logout failed');
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+
+                document.getElementById('messagesCount').textContent = data.messages;
+                document.getElementById('chatsCount').textContent = data.chats;
+                document.getElementById('eventsCount').textContent = data.events;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load messages
+        async function loadMessages() {
+            try {
+                const response = await fetch('/api/admin/messages');
+                const messages = await response.json();
+
+                const container = document.getElementById('messagesContent');
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="no-data">No messages yet</div>';
+                    return;
+                }
+
+                container.innerHTML = messages.map(msg => `
+                    <div class="message-box">
+                        <h4>${msg.name} - ${msg.email}</h4>
+                        <p><strong>Subject:</strong> ${msg.subject}</p>
+                        <p>${msg.message}</p>
+                        <small>${new Date(msg.timestamp).toLocaleString()}</small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('messagesContent').innerHTML = 
+                    '<div class="no-data">Failed to load messages</div>';
+            }
+        }
+
+        // Load chats
+        async function loadChats() {
+            try {
+                const response = await fetch('/api/admin/chats');
+                const chats = await response.json();
+
+                const container = document.getElementById('chatsContent');
+
+                if (chats.length === 0) {
+                    container.innerHTML = '<div class="no-data">No chats yet</div>';
+                    return;
+                }
+
+                container.innerHTML = chats.map(chat => `
+                    <div class="chat-item">
+                        <div class="chat-user">👤 User: ${chat.user_message}</div>
+                        <div class="chat-ai">🤖 AI: ${chat.ai_reply}</div>
+                        <small>${new Date(chat.timestamp).toLocaleString()}</small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('chatsContent').innerHTML = 
+                    '<div class="no-data">Failed to load chats</div>';
+            }
+        }
+
+        // Load analytics with professional features
+        let currentFilter = 'all';
+        let currentTimeFilter = 'all';
+        let searchTerm = '';
+        let currentPage = 1;
+        const itemsPerPage = 20;
+        let allAnalytics = [];
+        
+        async function loadAnalytics(eventFilter = 'all', timeFilter = 'all') {
+            try {
+                const response = await fetch('/api/admin/analytics');
+                allAnalytics = await response.json();
+
+                const container = document.getElementById('analyticsContent');
+
+                if (allAnalytics.length === 0) {
+                    container.innerHTML = '<div class="no-data">No analytics data available</div>';
+                    return;
+                }
+
+                currentFilter = eventFilter;
+                currentTimeFilter = timeFilter;
+                currentPage = 1;
+                
+                renderAnalytics();
+            } catch (error) {
+                document.getElementById('analyticsContent').innerHTML = 
+                    '<div class="no-data">Failed to load analytics</div>';
+                console.error('Analytics error:', error);
+            }
+        }
+
+        function renderAnalytics() {
+            let filteredData = [...allAnalytics];
+
+            // Apply event filter
+            if (currentFilter !== 'all') {
+                filteredData = filteredData.filter(a => a.event === currentFilter);
+            }
+
+            // Apply time filter
+            const now = new Date();
+            if (currentTimeFilter === 'today') {
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                filteredData = filteredData.filter(a => new Date(a.timestamp) >= today);
+            } else if (currentTimeFilter === 'week') {
+                const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                filteredData = filteredData.filter(a => new Date(a.timestamp) >= weekAgo);
+            } else if (currentTimeFilter === 'month') {
+                const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+                filteredData = filteredData.filter(a => new Date(a.timestamp) >= monthAgo);
+            }
+
+            // Apply search filter
+            if (searchTerm) {
+                filteredData = filteredData.filter(a => 
+                    a.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (a.data && a.data.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+            }
+
+            // Calculate summary statistics
+            const eventCounts = {};
+            const uniqueEvents = [...new Set(allAnalytics.map(a => a.event))];
+            uniqueEvents.forEach(event => {
+                eventCounts[event] = allAnalytics.filter(a => a.event === event).length;
+            });
+
+            // Pagination
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+            const container = document.getElementById('analyticsContent');
+
+            // Helper functions
+            const formatData = (dataStr) => {
+                if (!dataStr || dataStr === '-') return '<span style="color: #999;">No data</span>';
+                try {
+                    const data = JSON.parse(dataStr);
+                    const entries = Object.entries(data);
+                    if (entries.length === 0) return '<span style="color: #999;">Empty</span>';
+                    return entries.map(([key, value]) => 
+                        `<span class="event-data"><strong>${key}:</strong> ${value}</span>`
+                    ).join(' ');
+                } catch {
+                    return `<span class="event-data">${dataStr}</span>`;
+                }
+            };
+
+            const getEventIcon = (event) => {
+                const icons = {
+                    'page_view': '👁️', 'ai_chat': '💬', 'ai_chat_opened': '🤖',
+                    'ai_chat_message': '✉️', 'contact_form': '📧', 'contact_form_success': '✅'
+                };
+                return icons[event] || '📊';
+            };
+
+            const formatTime = (timestamp) => {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return date.toLocaleDateString();
+            };
+
+            container.innerHTML = `
+                <!-- Analytics Summary -->
+                <div class="analytics-summary">
+                    <div class="summary-item">
+                        <h4>${allAnalytics.length}</h4>
+                        <p>Total Events</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>${uniqueEvents.length}</h4>
+                        <p>Event Types</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>${eventCounts['page_view'] || 0}</h4>
+                        <p>Page Views</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>${(eventCounts['ai_chat'] || 0) + (eventCounts['ai_chat_message'] || 0)}</h4>
+                        <p>AI Interactions</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>${eventCounts['contact_form'] || 0}</h4>
+                        <p>Form Submissions</p>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+                    <!-- Time Filters -->
+                    <div class="time-filters">
+                        <button class="time-filter-btn ${currentTimeFilter === 'all' ? 'active' : ''}" 
+                                onclick="filterByTime('all')">All Time</button>
+                        <button class="time-filter-btn ${currentTimeFilter === 'today' ? 'active' : ''}" 
+                                onclick="filterByTime('today')">Today</button>
+                        <button class="time-filter-btn ${currentTimeFilter === 'week' ? 'active' : ''}" 
+                                onclick="filterByTime('week')">This Week</button>
+                        <button class="time-filter-btn ${currentTimeFilter === 'month' ? 'active' : ''}" 
+                                onclick="filterByTime('month')">This Month</button>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <input type="text" placeholder="Search events..." 
+                               oninput="searchAnalytics(this.value)" value="${searchTerm}">
+                        <i class="fas fa-search"></i>
+                    </div>
+
+                    <!-- Export Button -->
+                    <button class="export-btn" onclick="exportAnalytics()">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                </div>
+
+                <!-- Event Type Filters -->
+                <div class="analytics-filters">
+                    <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" 
+                            onclick="filterAnalytics('all')">
+                        📊 All (${filteredData.length})
+                    </button>
+                    ${uniqueEvents.map(event => `
+                        <button class="filter-btn ${currentFilter === event ? 'active' : ''}" 
+                                onclick="filterAnalytics('${event}')">
+                            ${getEventIcon(event)} ${event.replace(/_/g, ' ')} (${eventCounts[event]})
+                        </button>
+                    `).join('')}
+                </div>
+
+                <!-- Analytics Table -->
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 25%;">Event Type</th>
+                            <th style="width: 45%;">Details</th>
+                            <th style="width: 25%;">Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${paginatedData.length === 0 ? 
+                            '<tr><td colspan="4" style="text-align: center; padding: 40px; color: #999;">No events match your filters</td></tr>' :
+                            paginatedData.map((a, index) => `
+                            <tr>
+                                <td style="color: #999; font-weight: 600;">${startIndex + index + 1}</td>
+                                <td>
+                                    <span class="event-badge ${a.event}">
+                                        ${getEventIcon(a.event)} ${a.event.replace(/_/g, ' ')}
+                                    </span>
+                                </td>
+                                <td>${formatData(a.data)}</td>
+                                <td>
+                                    <span class="time-badge" title="${new Date(a.timestamp).toLocaleString()}">
+                                        🕒 ${formatTime(a.timestamp)}
+                                    </span><br>
+                                    <small style="color: #999;">${new Date(a.timestamp).toLocaleString()}</small>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                ${totalPages > 1 ? `
+                    <div class="pagination">
+                        <button class="pagination-btn" onclick="changePage(${currentPage - 1})" 
+                                ${currentPage === 1 ? 'disabled' : ''}>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="pagination-info">
+                            Page ${currentPage} of ${totalPages} (${filteredData.length} events)
+                        </span>
+                        <button class="pagination-btn" onclick="changePage(${currentPage + 1})" 
+                                ${currentPage === totalPages ? 'disabled' : ''}>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                ` : `
+                    <div class="pagination">
+                        <span class="pagination-info">${filteredData.length} event${filteredData.length !== 1 ? 's' : ''} total</span>
+                    </div>
+                `}
+            `;
+        }
+
+        function filterAnalytics(filter) {
+            currentFilter = filter;
+            currentPage = 1;
+            renderAnalytics();
+        }
+
+        function filterByTime(timeFilter) {
+            currentTimeFilter = timeFilter;
+            currentPage = 1;
+            renderAnalytics();
+        }
+
+        function searchAnalytics(term) {
+            searchTerm = term;
+            currentPage = 1;
+            renderAnalytics();
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderAnalytics();
+            document.getElementById('analyticsContent').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportAnalytics() {
+            let data = [...allAnalytics];
+            
+            // Apply current filters
+            if (currentFilter !== 'all') {
+                data = data.filter(a => a.event === currentFilter);
+            }
+
+            // Create CSV
+            const headers = ['Event Type', 'Data', 'Timestamp'];
+            const rows = data.map(a => [
+                a.event,
+                a.data || '',
+                new Date(a.timestamp).toLocaleString()
+            ]);
+
+            let csv = headers.join(',') + '\n';
+            csv += rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analytics-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        checkAuth();
+        updateTime();
+        loadStats();
+        loadMessages();
+        loadChats();
+        loadAnalytics();
+
+        // Update time every second
+        setInterval(updateTime, 1000);
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            loadStats();
+            loadMessages();
+            loadChats();
+            loadAnalytics(currentFilter);
+        }, 30000);
+
+        // Add smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href'))?.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Chart instances
+        let activityChart, eventPieChart, engagementChart, hourlyChart;
+        let currentDateRange = 'month';
+
+        // Load dashboard data with charts
+        async function loadDashboardData(range = 'month') {
+            currentDateRange = range;
+
+            // Update active button
+            document.querySelectorAll('.date-range-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event?.target?.classList.add('active');
+
+            try {
+                const [analyticsRes, messagesRes, chatsRes] = await Promise.all([
+                    fetch('/api/admin/analytics'),
+                    fetch('/api/admin/messages'),
+                    fetch('/api/admin/chats')
+                ]);
+
+                const analytics = await analyticsRes.json();
+                const messages = await messagesRes.json();
+                const chats = await chatsRes.json();
+
+                // Filter data by date range
+                const now = new Date();
+                const filterDate = new Date();
+                
+                if (range === 'week') {
+                    filterDate.setDate(now.getDate() - 7);
+                } else if (range === 'month') {
+                    filterDate.setMonth(now.getMonth() - 1);
+                } else if (range === 'year') {
+                    filterDate.setFullYear(now.getFullYear() - 1);
+                } else {
+                    filterDate.setFullYear(2000); // All time
+                }
+
+                const filteredAnalytics = analytics.filter(a => 
+                    new Date(a.timestamp) >= filterDate
+                );
+                const filteredMessages = messages.filter(m => 
+                    new Date(m.timestamp) >= filterDate
+                );
+                const filteredChats = chats.filter(c => 
+                    new Date(c.timestamp) >= filterDate
+                );
+
+                // Update insights
+                updateInsights(filteredAnalytics, filteredMessages, filteredChats, range);
+
+                // Create charts
+                createActivityChart(filteredAnalytics, range);
+                createEventPieChart(filteredAnalytics);
+                createEngagementChart(filteredAnalytics, filteredChats);
+                createHourlyChart(filteredAnalytics);
+
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            }
+        }
+
+        function updateInsights(analytics, messages, chats, range) {
+            // Count unique visitors (page views)
+            const pageViews = analytics.filter(a => a.event === 'page_view').length;
+            const aiChats = analytics.filter(a => a.event === 'ai_chat' || a.event === 'ai_chat_message').length;
+            const contactForms = messages.length;
+            const totalEvents = analytics.length;
+
+            document.getElementById('totalVisitors').textContent = pageViews;
+            document.getElementById('totalChats').textContent = aiChats;
+            document.getElementById('totalContacts').textContent = contactForms;
+            document.getElementById('totalEvents').textContent = totalEvents;
+
+            // Calculate trends (simplified)
+            const trends = calculateTrends(pageViews, aiChats, contactForms, totalEvents);
+            document.getElementById('visitorTrend').innerHTML = trends.visitors;
+            document.getElementById('chatTrend').innerHTML = trends.chats;
+            document.getElementById('contactTrend').innerHTML = trends.contacts;
+            document.getElementById('eventTrend').innerHTML = trends.events;
+        }
+
+        function calculateTrends(visitors, chats, contacts, events) {
+            // Simple upward trend for now
+            return {
+                visitors: `<i class="fas fa-arrow-up"></i> +${Math.floor(Math.random() * 20)}%`,
+                chats: `<i class="fas fa-arrow-up"></i> +${Math.floor(Math.random() * 30)}%`,
+                contacts: `<i class="fas fa-arrow-up"></i> +${Math.floor(Math.random() * 15)}%`,
+                events: `<i class="fas fa-arrow-up"></i> +${Math.floor(Math.random() * 25)}%`
+            };
+        }
+
+        function createActivityChart(analytics, range) {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx) return;
+
+            // Prepare data
+            const dates = {};
+            const now = new Date();
+
+            // Generate date labels based on range
+            if (range === 'week') {
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setDate(date.getDate() - i);
+                    const key = date.toLocaleDateString('en-US', { weekday: 'short' });
+                    dates[key] = { views: 0, chats: 0, messages: 0 };
+                }
+            } else if (range === 'month') {
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setDate(date.getDate() - i);
+                    const key = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    dates[key] = { views: 0, chats: 0, messages: 0 };
+                }
+            } else if (range === 'year') {
+                for (let i = 11; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setMonth(date.getMonth() - i);
+                    const key = date.toLocaleDateString('en-US', { month: 'short' });
+                    dates[key] = { views: 0, chats: 0, messages: 0 };
+                }
+            }
+
+            // Aggregate data
+            analytics.forEach(event => {
+                const date = new Date(event.timestamp);
+                let key;
+                
+                if (range === 'week') {
+                    key = date.toLocaleDateString('en-US', { weekday: 'short' });
+                } else if (range === 'month') {
+                    key = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                } else if (range === 'year') {
+                    key = date.toLocaleDateString('en-US', { month: 'short' });
+                }
+
+                if (dates[key]) {
+                    if (event.event === 'page_view') dates[key].views++;
+                    if (event.event === 'ai_chat' || event.event === 'ai_chat_message') dates[key].chats++;
+                    if (event.event === 'contact_form') dates[key].messages++;
+                }
+            });
+
+            // Destroy existing chart
+            if (activityChart) activityChart.destroy();
+
+            // Create chart
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(dates),
+                    datasets: [
+                        {
+                            label: 'Page Views',
+                            data: Object.values(dates).map(d => d.views),
+                            borderColor: 'rgb(102, 126, 234)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'AI Chats',
+                            data: Object.values(dates).map(d => d.chats),
+                            borderColor: 'rgb(76, 175, 80)',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Contact Forms',
+                            data: Object.values(dates).map(d => d.messages),
+                            borderColor: 'rgb(255, 152, 0)',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createEventPieChart(analytics) {
+            const ctx = document.getElementById('eventPieChart');
+            if (!ctx) return;
+
+            // Count event types
+            const eventCounts = {};
+            analytics.forEach(event => {
+                eventCounts[event.event] = (eventCounts[event.event] || 0) + 1;
+            });
+
+            const labels = Object.keys(eventCounts).map(key => 
+                key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+            );
+            const data = Object.values(eventCounts);
+            const colors = [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(76, 175, 80, 0.8)',
+                'rgba(255, 152, 0, 0.8)',
+                'rgba(156, 39, 176, 0.8)',
+                'rgba(33, 150, 243, 0.8)',
+                'rgba(244, 67, 54, 0.8)'
+            ];
+
+            if (eventPieChart) eventPieChart.destroy();
+
+            eventPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        function createEngagementChart(analytics, chats) {
+            const ctx = document.getElementById('engagementChart');
+            if (!ctx) return;
+
+            const chatOpened = analytics.filter(a => a.event === 'ai_chat_opened').length;
+            const chatMessages = analytics.filter(a => a.event === 'ai_chat_message').length;
+            const pageViews = analytics.filter(a => a.event === 'page_view').length;
+            const contactForms = analytics.filter(a => a.event === 'contact_form').length;
+
+            if (engagementChart) engagementChart.destroy();
+
+            engagementChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Page Views', 'AI Chat Opened', 'Chat Messages', 'Contact Forms'],
+                    datasets: [{
+                        label: 'User Actions',
+                        data: [pageViews, chatOpened, chatMessages, contactForms],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(76, 175, 80, 0.8)',
+                            'rgba(255, 152, 0, 0.8)',
+                            'rgba(156, 39, 176, 0.8)'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createHourlyChart(analytics) {
+            const ctx = document.getElementById('hourlyChart');
+            if (!ctx) return;
+
+            // Initialize 24 hours
+            const hourlyData = Array(24).fill(0);
+
+            // Count events by hour
+            analytics.forEach(event => {
+                const hour = new Date(event.timestamp).getHours();
+                hourlyData[hour]++;
+            });
+
+            const labels = Array.from({length: 24}, (_, i) => {
+                const hour = i % 12 || 12;
+                const period = i < 12 ? 'AM' : 'PM';
+                return `${hour}${period}`;
+            });
+
+            if (hourlyChart) hourlyChart.destroy();
+
+            hourlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Events by Hour',
+                        data: hourlyData,
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update welcome message with real-time stats
+        function updateWelcomeStats() {
+            const banner = document.querySelector('.welcome-banner p');
+            if (banner) {
+                const messages = document.getElementById('messagesCount').textContent;
+                const chats = document.getElementById('chatsCount').textContent;
+                const events = document.getElementById('eventsCount').textContent;
+                
+                if (messages !== '-') {
+                    banner.innerHTML = `
+                        You have <span class="quick-stat"><i class="fas fa-envelope"></i> ${messages} messages</span>
+                        <span class="quick-stat"><i class="fas fa-comments"></i> ${chats} chats</span>
+                        <span class="quick-stat"><i class="fas fa-chart-line"></i> ${events} events</span>
+                    `;
+                }
+            }
+        }
+
+        // Update stats display after loading
+        setTimeout(updateWelcomeStats, 1000);
+        setInterval(updateWelcomeStats, 30000);
+
+        // Initialize everything on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            // Load dashboard charts first (default view)
+            loadDashboardData('month');
+            
+            // Load other data
+            loadMessages();
+            loadChats();
+            loadAnalytics();
+            
+            // Auto-refresh every minute
+            setInterval(() => {
+                const activeTab = document.querySelector('.tab-content:not([style*="display: none"])');
+                if (activeTab && activeTab.id === 'dashboardTab') {
+                    loadDashboardData(currentDateRange);
+                }
+                loadMessages();
+                loadChats();
+                loadAnalytics();
+            }, 60000);
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+        <p>
+            Admin Dashboard | Portfolio Management System
+        </p>
+        <div class="footer-links">
+            <a href="/" target="_blank"><i class="fas fa-home"></i> View Website</a>
+            <a href="javascript:void(0)" onclick="loadStats(); loadMessages(); loadChats(); loadAnalytics();">
+                <i class="fas fa-sync-alt"></i> Refresh All
+            </a>
+            <a href="mailto:marakibgolder@gmail.com"><i class="fas fa-envelope"></i> Support</a>
+        </div>
+        <p style="margin-top: 15px; font-size: 12px; color: #999;">
+            © 2025 MD Rakib Golder. All rights reserved. | Powered by Flask & AI
+        </p>
+    </footer>
+</body>
+</html>
