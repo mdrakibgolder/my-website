@@ -42,35 +42,6 @@
         <div class="loader-spinner"></div>
     </div>
 
-    <!-- Video Background -->
-    <div class="video-background">
-        <video class="bg-video active" autoplay muted loop playsinline>
-            <source src="static/videos/1085656-uhd_3840_2160_25fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/1722882-uhd_3840_2160_25fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/1851190-uhd_3840_2160_25fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/3129671-uhd_3840_2160_30fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/3129977-uhd_3840_2160_30fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/3130284-uhd_3840_2160_30fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/3163534-uhd_3840_2160_30fps.mp4" type="video/mp4">
-        </video>
-        <video class="bg-video" muted loop playsinline>
-            <source src="static/videos/mixkit-slowly-approaching-a-clock-on-a-black-background-28897-hd-ready.mp4" type="video/mp4">
-        </video>
-        <div class="video-overlay"></div>
-    </div>
-
     <!-- Animated Particles -->
     <canvas id="particles-canvas"></canvas>
 
@@ -104,11 +75,38 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <!-- Video Background - Only in Hero -->
+        <div class="video-background">
+            <video class="bg-video active" autoplay muted loop playsinline preload="auto">
+                <source src="static/videos/1085656-uhd_3840_2160_25fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/1722882-uhd_3840_2160_25fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/1851190-uhd_3840_2160_25fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/3129671-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/3129977-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/3130284-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/3163534-uhd_3840_2160_30fps.mp4" type="video/mp4">
+            </video>
+            <video class="bg-video" muted loop playsinline preload="none">
+                <source src="static/videos/mixkit-slowly-approaching-a-clock-on-a-black-background-28897-hd-ready.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
                     <div class="hero-badge">
-                        <i class="fas fa-star"></i>
                         <span>Available for Freelance</span>
                     </div>
                     <h1 class="hero-title">
@@ -141,9 +139,9 @@
                             <p>Projects Completed</p>
                         </div>
                         <div class="stat">
-                            <div class="stat-icon"><i class="fas fa-heart"></i></div>
-                            <h3>100%</h3>
-                            <p>Client Satisfaction</p>
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <h3>100+</h3>
+                            <p>Happy Clients</p>
                         </div>
                     </div>
                 </div>
@@ -169,6 +167,23 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Video Controls - Inside Hero -->
+        <div class="video-controls">
+            <button class="video-btn" id="prevVideo"><i class="fas fa-chevron-left"></i></button>
+            <div class="video-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+                <span class="dot" data-index="4"></span>
+                <span class="dot" data-index="5"></span>
+                <span class="dot" data-index="6"></span>
+                <span class="dot" data-index="7"></span>
+            </div>
+            <button class="video-btn" id="nextVideo"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        
         <div class="scroll-indicator">
             <div class="mouse">
                 <div class="wheel"></div>
@@ -198,34 +213,37 @@
                     <p>With over 5 years of experience, I've worked on diverse projects ranging from AI-powered mobile applications to enterprise-level web platforms with real-time analytics. My approach combines technical excellence with creative problem-solving to deliver solutions that make a real impact.</p>
                 </div>
             </div>
-            <div class="skills-grid">
-                        <div class="skill-item">
-                            <i class="fas fa-brain"></i>
-                            <div>
-                                <h4>AI & Machine Learning</h4>
-                                <p>TensorFlow, PyTorch, OpenAI</p>
-                            </div>
+            
+            <!-- Skills Grid -->
+            <div class="skills-section">
+                <h3 class="skills-title">My Expertise</h3>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <i class="fas fa-brain"></i>
+                        <div>
+                            <h4>AI & Machine Learning</h4>
+                            <p>TensorFlow, PyTorch, OpenAI</p>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-laptop-code"></i>
-                            <div>
-                                <h4>Full Stack Development</h4>
-                                <p>React, Node.js, Python, .NET</p>
-                            </div>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-laptop-code"></i>
+                        <div>
+                            <h4>Full Stack Development</h4>
+                            <p>React, Node.js, Python, .NET</p>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-database"></i>
-                            <div>
-                                <h4>Database & Cloud</h4>
-                                <p>MongoDB, PostgreSQL, AWS</p>
-                            </div>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-database"></i>
+                        <div>
+                            <h4>Database & Cloud</h4>
+                            <p>MongoDB, PostgreSQL, AWS</p>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-mobile-alt"></i>
-                            <div>
-                                <h4>Mobile Development</h4>
-                                <p>React Native, Flutter, MAUI</p>
-                            </div>
+                    </div>
+                    <div class="skill-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div>
+                            <h4>Mobile Development</h4>
+                            <p>React Native, Flutter, MAUI</p>
                         </div>
                     </div>
                 </div>
@@ -394,16 +412,20 @@
                 </div>
                 <form class="contact-form" id="contactForm">
                     <div class="form-group">
-                        <input type="text" name="name" placeholder="Your Name" required>
+                        <label for="name" class="form-label">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" name="email" placeholder="Your Email" required>
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="subject" placeholder="Subject" required>
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="What is this about?" required>
                     </div>
                     <div class="form-group">
-                        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                        <label for="message" class="form-label">Your Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">
                         <span>Send Message</span>
@@ -489,8 +511,44 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">RG</span>
+                        <span class="logo-text">Rakib Golder</span>
+                    </a>
+                    <p class="footer-tagline">AI Engineer & Full Stack Developer</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-nav">
+                        <h4>Quick Links</h4>
+                        <a href="#home">Home</a>
+                        <a href="#about">About</a>
+                        <a href="#services">Services</a>
+                        <a href="#portfolio">Projects</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                    <div class="footer-nav">
+                        <h4>Services</h4>
+                        <a href="#services">AI & Machine Learning</a>
+                        <a href="#services">Full Stack Development</a>
+                        <a href="#services">Mobile App Development</a>
+                        <a href="#services">Data Analytics</a>
+                    </div>
+                    <div class="footer-nav">
+                        <h4>Connect</h4>
+                        <a href="mailto:marakibgolder@gmail.com">marakibgolder@gmail.com</a>
+                        <div class="footer-social">
+                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
                 <p>&copy; 2025 MD Rakib Golder. All rights reserved.</p>
-                <p>Crafted with <i class="fas fa-heart"></i> and creativity</p>
+                <p>Crafted with <i class="fas fa-heart"></i> using Python, Flask & Modern Web Technologies</p>
             </div>
         </div>
     </footer>
@@ -565,22 +623,6 @@
                 </button>
             </form>
         </div>
-    </div>
-
-    <!-- Video Controls -->
-    <div class="video-controls">
-        <button class="video-btn" id="prevVideo"><i class="fas fa-chevron-left"></i></button>
-        <div class="video-dots">
-            <span class="dot active" data-index="0"></span>
-            <span class="dot" data-index="1"></span>
-            <span class="dot" data-index="2"></span>
-            <span class="dot" data-index="3"></span>
-            <span class="dot" data-index="4"></span>
-            <span class="dot" data-index="5"></span>
-            <span class="dot" data-index="6"></span>
-            <span class="dot" data-index="7"></span>
-        </div>
-        <button class="video-btn" id="nextVideo"><i class="fas fa-chevron-right"></i></button>
     </div>
 
     <!-- Scroll Progress Bar -->

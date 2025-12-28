@@ -125,29 +125,68 @@ function initVideoBackground() {
     const dots = document.querySelectorAll('.dot');
     let currentVideo = 0;
     let autoPlayInterval;
+    let isTransitioning = false;
 
     if (videos.length === 0) return;
 
-    // Preload videos
-    videos.forEach((video, index) => {
-        if (index !== 0) {
-            video.load();
+    // Only preload the next video, not all
+    function preloadNextVideo(index) {
+        const nextIndex = (index + 1) % videos.length;
+        const nextVideo = videos[nextIndex];
+        if (nextVideo.preload === 'none') {
+            nextVideo.preload = 'auto';
+            nextVideo.load();
         }
-    });
+    }
 
-    // Switch video function
+    // Preload next video after current starts
+    preloadNextVideo(0);
+
+    // Switch video function with debounce
     function switchVideo(index) {
-        if (index < 0 || index >= videos.length) return;
+        if (index < 0 || index >= videos.length || isTransitioning || index === currentVideo) return;
 
+        isTransitioning = true;
+
+        // Pause current video
+        videos[currentVideo].pause();
+        
         // Remove active from current
         videos[currentVideo].classList.remove('active');
         dots[currentVideo].classList.remove('active');
 
-        // Add active to new
+        // Update current index
         currentVideo = index;
-        videos[currentVideo].classList.add('active');
-        videos[currentVideo].play();
-        dots[currentVideo].classList.add('active');
+        
+        // Load and play new video
+        const newVideo = videos[currentVideo];
+        if (newVideo.preload === 'none') {
+            newVideo.preload = 'auto';
+            newVideo.load();
+        }
+        
+        // Wait for video to be ready
+        const playVideo = () => {
+            newVideo.classList.add('active');
+            dots[currentVideo].classList.add('active');
+            newVideo.play().catch(() => {});
+            
+            // Preload next video
+            preloadNextVideo(currentVideo);
+            
+            // Allow transitions again after fade
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1000);
+        };
+
+        if (newVideo.readyState >= 3) {
+            playVideo();
+        } else {
+            newVideo.addEventListener('canplay', playVideo, { once: true });
+            // Fallback timeout
+            setTimeout(playVideo, 2000);
+        }
 
         // Reset auto-play timer
         resetAutoPlay();
@@ -165,9 +204,9 @@ function initVideoBackground() {
         switchVideo(prev);
     }
 
-    // Auto-play
+    // Auto-play with longer interval
     function startAutoPlay() {
-        autoPlayInterval = setInterval(nextVideo, 20000); // Change every 20 seconds
+        autoPlayInterval = setInterval(nextVideo, 25000); // Change every 25 seconds
     }
 
     function resetAutoPlay() {
@@ -183,8 +222,11 @@ function initVideoBackground() {
         dot.addEventListener('click', () => switchVideo(index));
     });
 
-    // Keyboard navigation
+    // Keyboard navigation - only when not in chat
     document.addEventListener('keydown', (e) => {
+        const chatInput = document.getElementById('chatInput');
+        if (document.activeElement === chatInput) return;
+        
         if (e.key === 'ArrowLeft') prevVideo();
         if (e.key === 'ArrowRight') nextVideo();
     });
@@ -195,7 +237,7 @@ function initVideoBackground() {
             clearInterval(autoPlayInterval);
             videos[currentVideo].pause();
         } else {
-            videos[currentVideo].play();
+            videos[currentVideo].play().catch(() => {});
             startAutoPlay();
         }
     });
@@ -793,22 +835,38 @@ function initParticles() {
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
     
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let particles = [];
     let mouse = { x: null, y: null, radius: 150 };
+    let animationId = null;
+    let isVisible = true;
     
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    window.addEventListener('resize', () => {
+    // Set canvas size
+    function setCanvasSize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        init();
+    }
+    setCanvasSize();
+    
+    // Debounced resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            setCanvasSize();
+            init();
+        }, 200);
     });
     
+    // Throttled mouse move
+    let lastMouseUpdate = 0;
     window.addEventListener('mousemove', (e) => {
-        mouse.x = e.x;
-        mouse.y = e.y;
+        const now = Date.now();
+        if (now - lastMouseUpdate > 16) { // ~60fps
+            mouse.x = e.x;
+            mouse.y = e.y;
+            lastMouseUpdate = now;
+        }
     });
     
     class Particle {
@@ -816,9 +874,9 @@ function initParticles() {
             this.x = Math.random() * canvas.width;
             this.y = Math.random() * canvas.height;
             this.size = Math.random() * 2 + 0.5;
-            this.speedX = Math.random() * 0.3 - 0.15;
-            this.speedY = Math.random() * 0.3 - 0.15;
-            this.color = `rgba(${Math.random() > 0.5 ? '139, 92, 246' : '6, 182, 212'}, ${Math.random() * 0.3 + 0.2})`;
+            this.speedX = Math.random() * 0.2 - 0.1;
+            this.speedY = Math.random() * 0.2 - 0.1;
+            this.color = `rgba(${Math.random() > 0.5 ? '139, 92, 246' : '6, 182, 212'}, ${Math.random() * 0.25 + 0.15})`;
         }
         
         update() {
@@ -828,16 +886,18 @@ function initParticles() {
             if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
             if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
             
-            // Mouse interaction
-            const dx = mouse.x - this.x;
-            const dy = mouse.y - this.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            if (distance < mouse.radius) {
-                const angle = Math.atan2(dy, dx);
-                const force = (mouse.radius - distance) / mouse.radius;
-                this.x -= Math.cos(angle) * force * 2;
-                this.y -= Math.sin(angle) * force * 2;
+            // Mouse interaction (simplified)
+            if (mouse.x !== null) {
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distSq = dx * dx + dy * dy;
+                
+                if (distSq < mouse.radius * mouse.radius) {
+                    const distance = Math.sqrt(distSq);
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    this.x -= (dx / distance) * force * 1.5;
+                    this.y -= (dy / distance) * force * 1.5;
+                }
             }
         }
         
@@ -851,22 +911,24 @@ function initParticles() {
     
     function init() {
         particles = [];
-        const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 20000), 60);
+        // Fewer particles for better performance
+        const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 30000), 40);
         for (let i = 0; i < numberOfParticles; i++) {
             particles.push(new Particle());
         }
     }
     
     function connect() {
-        for (let a = 0; a < particles.length; a++) {
-            for (let b = a + 1; b < particles.length; b++) {
+        const len = particles.length;
+        for (let a = 0; a < len; a++) {
+            for (let b = a + 1; b < len; b++) {
                 const dx = particles[a].x - particles[b].x;
                 const dy = particles[a].y - particles[b].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distSq = dx * dx + dy * dy;
                 
-                if (distance < 100) {
-                    const opacity = (100 - distance) / 100;
-                    ctx.strokeStyle = `rgba(139, 92, 246, ${opacity * 0.1})`;
+                if (distSq < 10000) { // 100^2
+                    const opacity = (100 - Math.sqrt(distSq)) / 100;
+                    ctx.strokeStyle = `rgba(139, 92, 246, ${opacity * 0.08})`;
                     ctx.lineWidth = 0.5;
                     ctx.beginPath();
                     ctx.moveTo(particles[a].x, particles[a].y);
@@ -878,6 +940,8 @@ function initParticles() {
     }
     
     function animate() {
+        if (!isVisible) return;
+        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         for (let particle of particles) {
@@ -886,8 +950,19 @@ function initParticles() {
         }
         
         connect();
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
+    
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+        isVisible = !document.hidden;
+        if (isVisible && !animationId) {
+            animate();
+        } else if (!isVisible && animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+    });
     
     init();
     animate();
@@ -910,24 +985,38 @@ function initCustomCursor() {
     
     let mouseX = 0, mouseY = 0;
     let outlineX = 0, outlineY = 0;
+    let animationId = null;
+    let isVisible = true;
     
+    // Use transform instead of left/top for better performance
     window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
         
-        dot.style.left = mouseX + 'px';
-        dot.style.top = mouseY + 'px';
+        dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
     });
     
     function animateOutline() {
-        outlineX += (mouseX - outlineX) * 0.15;
-        outlineY += (mouseY - outlineY) * 0.15;
+        if (!isVisible) return;
         
-        outline.style.left = outlineX + 'px';
-        outline.style.top = outlineY + 'px';
+        outlineX += (mouseX - outlineX) * 0.12;
+        outlineY += (mouseY - outlineY) * 0.12;
         
-        requestAnimationFrame(animateOutline);
+        outline.style.transform = `translate(${outlineX}px, ${outlineY}px)`;
+        
+        animationId = requestAnimationFrame(animateOutline);
     }
+    
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+        isVisible = !document.hidden;
+        if (isVisible && !animationId) {
+            animateOutline();
+        } else if (!isVisible && animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+    });
     
     animateOutline();
     
