@@ -80,8 +80,8 @@ Rules:
 # DATABASE CONFIGURATION
 # ===================================
 # Set to 'sqlite' or 'mysql'
-# Default to SQLite for local development
-DB_TYPE = os.getenv('DB_TYPE', 'sqlite')
+# Default to MySQL for server connection
+DB_TYPE = os.getenv('DB_TYPE', 'mysql')
 
 # SQLite config
 SQLITE_DB_PATH = 'database/portfolio.db'
