@@ -6,6 +6,7 @@ Secure + Production Ready + Gemini AI
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from flask_cors import CORS
 import sqlite3
+import mysql.connector
 import json
 from datetime import datetime
 import os
@@ -74,15 +75,34 @@ Rules:
 - If asked about Rakib, share relevant information
 """
 
+
 # ===================================
-# DATABASE
+# DATABASE CONFIGURATION
 # ===================================
-DATABASE = 'database/portfolio.db'
+# Set to 'sqlite' or 'mysql'
+# Default to SQLite for local development
+DB_TYPE = os.getenv('DB_TYPE', 'sqlite')
+
+# SQLite config
+SQLITE_DB_PATH = 'database/portfolio.db'
+
+# MySQL config (update as needed)
+MYSQL_CONFIG = {
+    'host': '192.248.161.221',  # or your cPanel MySQL hostname
+    'user': 'iwzxalvl_r-website',
+    'password': 'CkWpc]1q15@wUiNn',
+    'database': 'iwzxalvl_r-website',
+    'port': 3306
+}
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    if DB_TYPE == 'mysql':
+        conn = mysql.connector.connect(**MYSQL_CONFIG)
+        return conn
+    else:
+        conn = sqlite3.connect(SQLITE_DB_PATH)
+        conn.row_factory = sqlite3.Row
+        return conn
 
 
 def init_db():
