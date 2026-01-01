@@ -250,6 +250,21 @@ function initVideoBackground() {
 // SCROLL ANIMATIONS
 // ===================================
 function initScrollAnimations() {
+    // Hide/show video controls based on scroll position
+    const videoControls = document.querySelector('.video-controls');
+    const heroSection = document.querySelector('.hero');
+    
+    if (videoControls && heroSection) {
+        window.addEventListener('scroll', () => {
+            const heroHeight = heroSection.offsetHeight;
+            if (window.scrollY > heroHeight - 100) {
+                videoControls.classList.add('hidden');
+            } else {
+                videoControls.classList.remove('hidden');
+            }
+        });
+    }
+    
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -100px 0px'
@@ -527,7 +542,29 @@ function initAIChat() {
     const chatMessages = document.getElementById('chatMessages');
     const quickReplyBtns = document.querySelectorAll('.quick-reply-btn');
 
-    if (!chatToggleBtn || !chatWindow || !chatForm) return;
+    // Debug: Check if elements exist
+    if (!chatToggleBtn) {
+        console.error('AI Chat Error: chatToggleBtn not found');
+        return;
+    }
+    if (!chatWindow) {
+        console.error('AI Chat Error: chatWindow not found');
+        return;
+    }
+    if (!chatForm) {
+        console.error('AI Chat Error: chatInputForm not found');
+        return;
+    }
+    if (!chatInput) {
+        console.error('AI Chat Error: chatInput not found');
+        return;
+    }
+    if (!chatMessages) {
+        console.error('AI Chat Error: chatMessages not found');
+        return;
+    }
+
+    console.log('✅ AI Chat initialized successfully');
 
     let history = [];
     const MAX_HISTORY = 6;
@@ -596,11 +633,19 @@ function initAIChat() {
 
         } catch (err) {
             removeTyping();
-            if (window.DEBUG_MODE) console.error('Chat error:', err);
-            addMessage(
-                '⚠️ Sorry, I encountered an error. Please try again or email me at marakibgolder@gmail.com',
-                'bot'
-            );
+            console.error('❌ AI Chat Error:', err);
+            
+            let errorMessage = '⚠️ Sorry, I encountered an error. ';
+            
+            if (err.message.includes('Failed to fetch')) {
+                errorMessage += 'Unable to connect to the server. Please check your internet connection.';
+            } else if (err.message.includes('500')) {
+                errorMessage += 'The server encountered an error. Please try again later.';
+            } else {
+                errorMessage += 'Please try again or email me at marakibgolder@gmail.com';
+            }
+            
+            addMessage(errorMessage, 'bot');
             trackEvent('ai_chat_message', { success: false, error: err.message });
         }
     }

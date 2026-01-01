@@ -18,8 +18,8 @@ from time import time
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables (override system env vars)
+load_dotenv(override=True)
 
 # ===================================
 # APP CONFIG
@@ -28,7 +28,14 @@ app = Flask(__name__,
             static_folder='static',
             static_url_path='/static')
 app.secret_key = os.getenv('SECRET_KEY', 'SUPER_SECRET_KEY_CHANGE_IN_PRODUCTION_12345')
-CORS(app)
+
+# Configure CORS properly
+allowed_origins = os.getenv('ALLOWED_ORIGINS', '*')
+if allowed_origins == '*':
+    CORS(app)
+else:
+    origins = [origin.strip() for origin in allowed_origins.split(',')]
+    CORS(app, origins=origins, supports_credentials=True)
 
 # ===================================
 # 🔐 ENVIRONMENT VARIABLES (REQUIRED)
@@ -88,11 +95,11 @@ SQLITE_DB_PATH = 'database/portfolio.db'
 
 # MySQL config (update as needed)
 MYSQL_CONFIG = {
-    'host': '192.248.161.221',  # or your cPanel MySQL hostname
-    'user': 'iwzxalvl_r-website',
-    'password': 'CkWpc]1q15@wUiNn',
-    'database': 'iwzxalvl_r-website',
-    'port': 3306
+    'host': os.getenv('MYSQL_HOST', 'localhost'),
+    'user': os.getenv('MYSQL_USER', 'root'),
+    'password': os.getenv('MYSQL_PASSWORD', ''),
+    'database': os.getenv('MYSQL_DATABASE', 'portfolio'),
+    'port': int(os.getenv('MYSQL_PORT', 3306))
 }
 
 def get_db():
@@ -108,56 +115,84 @@ def get_db():
 def init_db():
     conn = get_db()
     cur = conn.cursor()
+    
+    # Determine SQL syntax based on database type
+    if DB_TYPE == 'mysql':
+        auto_increment = 'AUTO_INCREMENT'
+        text_type = 'VARCHAR(255)'
+        long_text_type = 'TEXT'
+        insert_ignore = 'INSERT IGNORE INTO'
+    else:
+        auto_increment = 'AUTOINCREMENT'
+        text_type = 'TEXT'
+        long_text_type = 'TEXT'
+        insert_ignore = 'INSERT OR IGNORE INTO'
 
-    cur.execute("""
+    # Create tables with appropriate syntax
+    cur.execute(f"""
     CREATE TABLE IF NOT EXISTS contact_messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT,
-        subject TEXT,
-        message TEXT,
+        id INTEGER PRIMARY KEY {auto_increment},
+        name {text_type},
+        email {text_type},
+        subject {text_type},
+        message {long_text_type},
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
+    )""")
 
-    cur.execute("""
+    cur.execute(f"""
     CREATE TABLE IF NOT EXISTS analytics (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event TEXT,
-        data TEXT,
+        id INTEGER PRIMARY KEY {auto_increment},
+        event {text_type},
+        data {long_text_type},
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
+    )""")
 
-    cur.execute("""
+    cur.execute(f"""
     CREATE TABLE IF NOT EXISTS admin_users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
-    )
-    """)
+        id INTEGER PRIMARY KEY {auto_increment},
+        username {text_type} UNIQUE,
+        password {text_type}
+    )""")
 
     # Hash the default password (change this in production!)
     default_password = hashlib.sha256('admin123'.encode()).hexdigest()
-    cur.execute("""
-    INSERT OR IGNORE INTO admin_users (username, password)
-    VALUES ('admin', ?)
-    """, (default_password,))
+    
+    if DB_TYPE == 'mysql':
+        cur.execute(f"""
+        {insert_ignore} admin_users (username, password)
+        VALUES (%s, %s)
+        """, ('admin', default_password))
+    else:
+        cur.execute(f"""
+        {insert_ignore} admin_users (username, password)
+        VALUES (?, ?)
+        """, ('admin', default_password))
 
-    cur.execute("""
+    cur.execute(f"""
     CREATE TABLE IF NOT EXISTS ai_chats (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_message TEXT,
-        ai_reply TEXT,
+        id INTEGER PRIMARY KEY {auto_increment},
+        user_message {long_text_type},
+        ai_reply {long_text_type},
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
+    )""")
 
     conn.commit()
     conn.close()
     print("[OK] Database ready")
 
 init_db()
+
+# ===================================
+# SECURITY HEADERS
+# ===================================
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to all responses"""
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
 
 # ===================================
 # STATIC FILES
@@ -168,10 +203,16 @@ def index():
 
 @app.route('/admin/login.html')
 def admin_login_page():
+    # If already logged in, redirect to dashboard
+    if session.get('admin'):
+        return redirect('/admin/dashboard.html')
     return send_from_directory('templates', 'login.html')
 
 @app.route('/admin/dashboard.html')
 def admin_dashboard_page():
+    # Redirect to login if not authenticated
+    if not session.get('admin'):
+        return redirect('/admin/login.html')
     return send_from_directory('templates', 'dashboard.html')
 
 # ===================================
@@ -188,16 +229,28 @@ def contact():
 
     conn = get_db()
     cur = conn.cursor()
+    
+    # Use appropriate parameter syntax
+    if DB_TYPE == 'mysql':
+        cur.execute("""
+        INSERT INTO contact_messages (name, email, subject, message)
+        VALUES (%s, %s, %s, %s)
+        """, (data['name'], data['email'], data['subject'], data['message']))
 
-    cur.execute("""
-    INSERT INTO contact_messages (name, email, subject, message)
-    VALUES (?, ?, ?, ?)
-    """, (data['name'], data['email'], data['subject'], data['message']))
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (%s, %s)
+        """, ('contact_form', json.dumps({'email': data['email']})))
+    else:
+        cur.execute("""
+        INSERT INTO contact_messages (name, email, subject, message)
+        VALUES (?, ?, ?, ?)
+        """, (data['name'], data['email'], data['subject'], data['message']))
 
-    cur.execute("""
-    INSERT INTO analytics (event, data)
-    VALUES (?, ?)
-    """, ('contact_form', json.dumps({'email': data['email']})))
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (?, ?)
+        """, ('contact_form', json.dumps({'email': data['email']})))
 
     conn.commit()
     conn.close()
@@ -212,11 +265,18 @@ def analytics():
     data = request.get_json()
     conn = get_db()
     cur = conn.cursor()
-
-    cur.execute("""
-    INSERT INTO analytics (event, data)
-    VALUES (?, ?)
-    """, (data.get('event'), json.dumps(data.get('data', {}))))
+    
+    # Use appropriate parameter syntax
+    if DB_TYPE == 'mysql':
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (%s, %s)
+        """, (data.get('event'), json.dumps(data.get('data', {}))))
+    else:
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (?, ?)
+        """, (data.get('event'), json.dumps(data.get('data', {}))))
 
     conn.commit()
     conn.close()
@@ -239,15 +299,28 @@ def ai_chat():
     # Save chat to database
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("""
-    INSERT INTO ai_chats (user_message, ai_reply)
-    VALUES (?, ?)
-    """, (message, reply))
     
-    cur.execute("""
-    INSERT INTO analytics (event, data)
-    VALUES (?, ?)
-    """, ('ai_chat', json.dumps({'message_length': len(message)})))
+    # Use appropriate parameter syntax
+    if DB_TYPE == 'mysql':
+        cur.execute("""
+        INSERT INTO ai_chats (user_message, ai_reply)
+        VALUES (%s, %s)
+        """, (message, reply))
+        
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (%s, %s)
+        """, ('ai_chat', json.dumps({'message_length': len(message)})))
+    else:
+        cur.execute("""
+        INSERT INTO ai_chats (user_message, ai_reply)
+        VALUES (?, ?)
+        """, (message, reply))
+        
+        cur.execute("""
+        INSERT INTO analytics (event, data)
+        VALUES (?, ?)
+        """, ('ai_chat', json.dumps({'message_length': len(message)})))
     
     conn.commit()
     conn.close()
@@ -257,9 +330,11 @@ def ai_chat():
 def generate_ai_reply(message, history):
     # If Gemini is not enabled, use fallback
     if not GEMINI_ENABLED:
+        print("[WARNING] Gemini is disabled, using fallback response")
         return fallback_response(message)
     
     try:
+        print(f"[INFO] Generating AI reply for message: {message[:50]}...")
         model = genai.GenerativeModel("gemini-2.0-flash")
 
         contents = [
@@ -282,12 +357,16 @@ def generate_ai_reply(message, history):
             "parts": [message]
         })
 
+        print("[INFO] Calling Gemini API...")
         response = model.generate_content(contents)
+        print(f"[SUCCESS] Gemini response received: {len(response.text)} characters")
 
         return response.text.strip()
 
     except Exception as e:
-        print("[ERROR] Gemini Error:", e)
+        print(f"[ERROR] Gemini Error: {type(e).__name__} - {str(e)}")
+        import traceback
+        traceback.print_exc()
         return fallback_response(message)
 
 # ===================================
@@ -373,10 +452,18 @@ def admin_login():
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("""
-    SELECT * FROM admin_users 
-    WHERE username=? AND password=?
-    """, (username, hashed_password))
+    
+    # Use appropriate parameter syntax
+    if DB_TYPE == 'mysql':
+        cur.execute("""
+        SELECT * FROM admin_users 
+        WHERE username=%s AND password=%s
+        """, (username, hashed_password))
+    else:
+        cur.execute("""
+        SELECT * FROM admin_users 
+        WHERE username=? AND password=?
+        """, (username, hashed_password))
     
     admin = cur.fetchone()
     conn.close()
