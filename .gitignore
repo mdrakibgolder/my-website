@@ -79,3 +79,13 @@ htmlcov/
 *.tmp
 *.temp
 .cache/
+
+# Large Media Files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+static/videos/
+videos/
