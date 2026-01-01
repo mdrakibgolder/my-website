@@ -3495,6 +3495,89 @@ textarea:focus-visible {
 /* ===================================
    RESPONSIVE DESIGN
    =================================== */
+
+/* Ultra-wide displays (4K and above) */
+@media (min-width: 1920px) {
+    .chat-window {
+        width: 500px;
+        height: 750px;
+        max-height: 90vh;
+        right: 20px;
+        bottom: 100px;
+    }
+    
+    .chat-messages {
+        max-height: calc(750px - 290px);
+        font-size: 0.95rem;
+    }
+    
+    .chat-input-container input {
+        font-size: 0.95rem;
+    }
+    
+    .ai-chat-widget {
+        right: 35px;
+        bottom: 35px;
+    }
+    
+    .chat-toggle-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+}
+
+/* Large desktops (Full HD) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+    .chat-window {
+        width: 460px;
+        height: 700px;
+        max-height: 85vh;
+    }
+    
+    .chat-messages {
+        max-height: calc(700px - 280px);
+    }
+    
+    .ai-chat-widget {
+        right: 30px;
+        bottom: 30px;
+    }
+    
+    .chat-toggle-btn {
+        width: 65px;
+        height: 65px;
+        font-size: 26px;
+    }
+}
+
+/* Standard laptops (1366px - common laptop resolution) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .chat-window {
+        width: 440px;
+        height: 680px;
+        max-height: 82vh;
+    }
+    
+    .chat-messages {
+        max-height: calc(680px - 275px);
+    }
+}
+
+/* Small desktops and large tablets */
+@media (min-width: 1025px) and (max-width: 1279px) {
+    .chat-window {
+        width: 400px;
+        height: 620px;
+        max-height: 78vh;
+    }
+    
+    .chat-messages {
+        max-height: calc(620px - 260px);
+    }
+}
+
+/* Tablets and small desktops */
 @media (max-width: 1024px) {
     :root {
         --section-padding: 80px;
@@ -3592,9 +3675,32 @@ textarea:focus-visible {
     }
 }
 
+/* Tablets (portrait and small landscape) */
 @media (max-width: 768px) {
     .hero {
         padding: 110px 0 40px;
+    }
+    
+    .chat-window {
+        width: 380px;
+        height: 600px;
+        max-height: 75vh;
+        bottom: 80px;
+    }
+    
+    .chat-messages {
+        max-height: calc(600px - 250px);
+    }
+    
+    .ai-chat-widget {
+        right: 15px;
+        bottom: 15px;
+    }
+    
+    .chat-toggle-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
     }
     
     .nav-menu {
@@ -3822,26 +3928,7 @@ textarea:focus-visible {
         bottom: 20px;
     }
     
-    .chat-window {
-        position: fixed;
-        width: 100vw;
-        height: calc(100vh - 100px);
-        right: 0;
-        bottom: 80px;
-        border-radius: 20px 20px 0 0;
-        max-height: calc(100vh - 100px);
-    }
-    
-    .ai-chat-widget {
-        bottom: 15px;
-        right: 15px;
-    }
-    
-    .chat-window {
-        width: 380px;
-        height: 600px;
-        bottom: 80px;
-    }
+
     
     .chat-toggle-btn {
         width: 60px;
