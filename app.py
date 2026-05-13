@@ -15,8 +15,16 @@ import secrets
 from functools import wraps
 from collections import defaultdict
 from time import time
-import google.generativeai as genai
 from dotenv import load_dotenv
+
+# Safely import google.generativeai
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except (ImportError, Exception) as e:
+    print(f"[WARNING] Could not import google.generativeai: {e}")
+    genai = None
+    GENAI_AVAILABLE = False
 
 # Load environment variables (override system env vars)
 load_dotenv(override=True)
@@ -46,6 +54,9 @@ if not GEMINI_API_KEY or GEMINI_API_KEY == "your_gemini_api_key_here":
     print("[WARNING] GEMINI_API_KEY not set. AI chat will use fallback responses.")
     print("[WARNING] Get your API key from: https://makersuite.google.com/app/apikey")
     print("[WARNING] Add it to the .env file")
+    GEMINI_ENABLED = False
+elif not GENAI_AVAILABLE:
+    print("[WARNING] google.generativeai not available. AI chat will use fallback responses.")
     GEMINI_ENABLED = False
 else:
     genai.configure(api_key=GEMINI_API_KEY)
