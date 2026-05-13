@@ -6,7 +6,6 @@ Secure + Production Ready + Gemini AI
 from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from flask_cors import CORS
 import sqlite3
-import mysql.connector
 import json
 from datetime import datetime
 import os
@@ -16,15 +15,6 @@ from functools import wraps
 from collections import defaultdict
 from time import time
 from dotenv import load_dotenv
-
-# Safely import google.generativeai
-try:
-    import google.generativeai as genai
-    GENAI_AVAILABLE = True
-except (ImportError, Exception) as e:
-    print(f"[WARNING] Could not import google.generativeai: {e}")
-    genai = None
-    GENAI_AVAILABLE = False
 
 # Load environment variables (override system env vars)
 load_dotenv(override=True)
@@ -46,21 +36,13 @@ else:
     CORS(app, origins=origins, supports_credentials=True)
 
 # ===================================
-# 🔐 ENVIRONMENT VARIABLES (REQUIRED)
+# 🔐 ENVIRONMENT VARIABLES (OPTIONAL)
 # ===================================
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not GEMINI_API_KEY or GEMINI_API_KEY == "your_gemini_api_key_here":
-    print("[WARNING] GEMINI_API_KEY not set. AI chat will use fallback responses.")
-    print("[WARNING] Get your API key from: https://makersuite.google.com/app/apikey")
-    print("[WARNING] Add it to the .env file")
-    GEMINI_ENABLED = False
-elif not GENAI_AVAILABLE:
-    print("[WARNING] google.generativeai not available. AI chat will use fallback responses.")
-    GEMINI_ENABLED = False
-else:
-    genai.configure(api_key=GEMINI_API_KEY)
-    GEMINI_ENABLED = True
+# AI features are now provided via fallback responses
+# To enable Gemini AI in the future, set GEMINI_API_KEY in .env
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_ENABLED = False  # Disabled for now due to dependency conflicts
+print("[INFO] AI chat using fallback responses (Gemini not available)")
 
 # ===================================
 # SYSTEM PROMPT
@@ -97,34 +79,21 @@ Rules:
 # ===================================
 # DATABASE CONFIGURATION
 # ===================================
-# Set to 'sqlite' or 'mysql'
-# Default to SQLite for easier local development
-DB_TYPE = os.getenv('DB_TYPE', 'sqlite')
+# Using SQLite for simplicity (no external dependencies)
+DB_TYPE = 'sqlite'
 
 # SQLite config - ensure directory exists
 SQLITE_DB_PATH = 'database/portfolio.db'
 os.makedirs('database', exist_ok=True)
 
-# MySQL config (update as needed)
-MYSQL_CONFIG = {
-    'host': os.getenv('MYSQL_HOST', 'localhost'),
-    'user': os.getenv('MYSQL_USER', 'root'),
-    'password': os.getenv('MYSQL_PASSWORD', ''),
-    'database': os.getenv('MYSQL_DATABASE', 'portfolio'),
-    'port': int(os.getenv('MYSQL_PORT', 3306))
-}
-
 def get_db():
-    if DB_TYPE == 'mysql':
-        conn = mysql.connector.connect(**MYSQL_CONFIG)
-        return conn
-    else:
-        conn = sqlite3.connect(SQLITE_DB_PATH)
-        conn.row_factory = sqlite3.Row
-        return conn
+    """Get SQLite database connection"""
+    conn = sqlite3.connect(SQLITE_DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def row_to_dict(row, cursor=None):
-    """Convert a database row to a dictionary (works with both MySQL and SQLite)"""
+    """Convert a database row to a dictionary"""
     if row is None:
         return None
     if DB_TYPE == 'mysql' and cursor:
@@ -360,46 +329,9 @@ def ai_chat():
     return jsonify({'reply': reply})
 
 def generate_ai_reply(message, history):
-    # If Gemini is not enabled, use fallback
-    if not GEMINI_ENABLED:
-        print("[WARNING] Gemini is disabled, using fallback response")
-        return fallback_response(message)
-    
-    try:
-        print(f"[INFO] Generating AI reply for message: {message[:50]}...")
-        model = genai.GenerativeModel("gemini-2.0-flash")
-
-        contents = [
-            {"role": "user", "parts": [SYSTEM_PROMPT]}
-        ]
-
-        # Add conversation history (limit to last 6)
-        for h in history[-6:]:
-            contents.append({
-                "role": "user",
-                "parts": [h.get("user", "")]
-            })
-            contents.append({
-                "role": "model",
-                "parts": [h.get("ai", "")]
-            })
-
-        contents.append({
-            "role": "user",
-            "parts": [message]
-        })
-
-        print("[INFO] Calling Gemini API...")
-        response = model.generate_content(contents)
-        print(f"[SUCCESS] Gemini response received: {len(response.text)} characters")
-
-        return response.text.strip()
-
-    except Exception as e:
-        print(f"[ERROR] Gemini Error: {type(e).__name__} - {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return fallback_response(message)
+    # Using fallback responses (Gemini not available)
+    print(f"[INFO] Generating fallback response for message: {message[:50]}...")
+    return fallback_response(message)
 
 # ===================================
 # UTILITY FUNCTIONS
