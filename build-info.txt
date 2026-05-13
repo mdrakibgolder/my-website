@@ -1,0 +1,2 @@
+# Build cache buster - forces Render to rebuild from scratch
+CACHE_BUSTER=2026-05-13T15:40:00Z
